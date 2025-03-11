@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: InventoryDev
+  data:
+    mongodb:
+      uri: ${DB_URI:mongodb+srv://jesuschumpitaz:InventoryDev@inventory.4jvtg.mongodb.net/?retryWrites=true&w=majority&appName=Inventory}
+server:
+  port: ${SERVER_PORT:8090}
