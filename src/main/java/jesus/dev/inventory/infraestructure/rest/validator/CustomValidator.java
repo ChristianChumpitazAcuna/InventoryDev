@@ -12,13 +12,13 @@ import reactor.core.publisher.Mono;
 public class CustomValidator {
     private final Validator validator;
 
-    public <T> Mono<T> validate(T dto) {
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(dto, dto.getClass().getName());
-        validator.validate(dto, bindingResult);
+    public <T> Mono<T> validate(T object) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(object, object.getClass().getName());
+        validator.validate(object, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return Mono.error(new WebExchangeBindException(null, bindingResult));
         }
-        return Mono.just(dto);
+        return Mono.just(object);
     }
 }

@@ -19,10 +19,10 @@ public class CpuRouter {
         return RouterFunctions
                 .nest(path(BASE_PATH),
                         route(POST("/create"), handler::create)
-                                .andRoute(PUT("/update"), handler::update)
-                                .andRoute(PATCH("/changeStatus/{status/{id}"), handler::changeStatus)
+                                .andRoute(PUT("/update/{id}"), handler::update)
+                                .andRoute(PATCH("/changeStatus/{status}/{id}"), handler::changeStatus)
                                 .andRoute(GET("/{id}"), handler::getById)
-                                .andRoute(GET("/{status}"), handler::getByStatus)
+                                .andRoute(GET("/findByStatus/{status}"), handler::getByStatus)
                 );
     }
 }

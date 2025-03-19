@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 public interface CpuReactiveMongoRepository extends ReactiveMongoRepository<CpuEntity, String> {
 
     @Query("{_id:  ?0}")
-    @Update("{status: {'status': ?1}}")
+    @Update("{$set: {'status': ?1}}")
     Mono<Void> changeStatus(String id, Boolean status);
 
     Flux<CpuEntity> findByStatus(Boolean status);

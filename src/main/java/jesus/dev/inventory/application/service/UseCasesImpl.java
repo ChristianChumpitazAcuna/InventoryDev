@@ -1,7 +1,9 @@
 package jesus.dev.inventory.application.service;
 
+import jesus.dev.inventory.application.exception.CreationException;
 import jesus.dev.inventory.application.exception.NotFoundException;
 import jesus.dev.inventory.application.exception.StatusAlreadySetException;
+import jesus.dev.inventory.application.exception.UpdatedException;
 import jesus.dev.inventory.application.mapper.CpuUseCaseMapper;
 import jesus.dev.inventory.domain.model.Cpu;
 import jesus.dev.inventory.domain.model.dto.CpuRequestDTO;
@@ -23,18 +25,22 @@ public class UseCasesImpl implements CpuUseCases {
     @Override
     public Mono<Cpu> saveCpu(CpuRequestDTO cpuRequestDTO) {
         return Mono.just(cpuRequestDTO)
-                .map(mapper::dtoToDomain)
+                .map(dto -> {
+                    Cpu cpu = mapper.dtoToDomain(dto);
+                    cpu.setStatus(true);
+                    return cpu;
+                })
                 .flatMap(repository::save)
                 .onErrorMap(e -> {
                     log.error("Error saving cpu: {}", e.getMessage(), e);
-                    return new RuntimeException("Error saving cpu: " + e.getMessage());
+                    return new CreationException("Error saving cpu: ", e);
                 });
     }
 
     @Override
     public Mono<Cpu> updateCpu(String id, CpuRequestDTO cpuRequestDTO) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new RuntimeException("Cannot find cpu with id: " + id)))
+                .switchIfEmpty(Mono.error(new NotFoundException("Cpu not found with id: " + id)))
                 .flatMap(existingCpu -> Mono.fromSupplier(() -> {
                     Cpu cpu = mapper.dtoToDomain(cpuRequestDTO);
                     cpu.setId(existingCpu.getId());
@@ -43,8 +49,10 @@ public class UseCasesImpl implements CpuUseCases {
                 }))
                 .flatMap(repository::save)
                 .onErrorMap(e -> {
-                    log.error("Error updating cpu: {}", e.getMessage(), e);
-                    return new RuntimeException("Error updating cpu: " + e.getMessage());
+                    if (e instanceof NotFoundException) {
+                        return e;
+                    }
+                    return new UpdatedException("Error saving cpu: ", e);
                 });
     }
 
@@ -60,8 +68,11 @@ public class UseCasesImpl implements CpuUseCases {
                     return repository.changeStatus(cpu.getId(), status);
                 })
                 .onErrorMap(e -> {
+                    if (e instanceof NotFoundException || e instanceof StatusAlreadySetException) {
+                        return e;
+                    }
                     log.error("Error updating cpu: {}", e.getMessage(), e);
-                    return new RuntimeException("Error updating cpu: " + e.getMessage());
+                    return new UpdatedException("Error updating cpu: ", e);
                 });
     }
 
