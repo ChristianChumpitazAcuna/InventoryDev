@@ -1,9 +1,9 @@
 package jesus.dev.inventory.application.service;
 
-import jesus.dev.inventory.application.exception.CreationException;
-import jesus.dev.inventory.application.exception.NotFoundException;
-import jesus.dev.inventory.application.exception.StatusAlreadySetException;
-import jesus.dev.inventory.application.exception.UpdatedException;
+import jesus.dev.inventory.application.exception.ItemCreationException;
+import jesus.dev.inventory.application.exception.ItemNotFoundException;
+import jesus.dev.inventory.application.exception.ItemStatusAlreadySetException;
+import jesus.dev.inventory.application.exception.ItemUpdatedException;
 import jesus.dev.inventory.application.mapper.CpuUseCaseMapper;
 import jesus.dev.inventory.domain.model.Cpu;
 import jesus.dev.inventory.domain.model.dto.CpuRequestDTO;
@@ -33,14 +33,14 @@ public class UseCasesImpl implements CpuUseCases {
                 .flatMap(repository::save)
                 .onErrorMap(e -> {
                     log.error("Error saving cpu: {}", e.getMessage(), e);
-                    return new CreationException("Error saving cpu: ", e);
+                    return new ItemCreationException("Error saving cpu: ", e);
                 });
     }
 
     @Override
     public Mono<Cpu> updateCpu(String id, CpuRequestDTO cpuRequestDTO) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cpu not found with id: " + id)))
+                .switchIfEmpty(Mono.error(new ItemNotFoundException("Cpu not found with id: " + id)))
                 .flatMap(existingCpu -> Mono.fromSupplier(() -> {
                     Cpu cpu = mapper.dtoToDomain(cpuRequestDTO);
                     cpu.setId(existingCpu.getId());
@@ -49,10 +49,10 @@ public class UseCasesImpl implements CpuUseCases {
                 }))
                 .flatMap(repository::save)
                 .onErrorMap(e -> {
-                    if (e instanceof NotFoundException) {
+                    if (e instanceof ItemNotFoundException) {
                         return e;
                     }
-                    return new UpdatedException("Error saving cpu: ", e);
+                    return new ItemUpdatedException("Error saving cpu: ", e);
                 });
     }
 
@@ -60,37 +60,37 @@ public class UseCasesImpl implements CpuUseCases {
     @Override
     public Mono<Void> changeStatusCpu(String id, Boolean status) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cannot find cpu with id: " + id)))
+                .switchIfEmpty(Mono.error(new ItemNotFoundException("Cannot find cpu with id: " + id)))
                 .flatMap(cpu -> {
                     if (cpu.getStatus().equals(status)) {
-                        return Mono.error(new StatusAlreadySetException("CPU is already in the requested status: " + id));
+                        return Mono.error(new ItemStatusAlreadySetException("CPU is already in the requested status: " + id));
                     }
                     return repository.changeStatus(cpu.getId(), status);
                 })
                 .onErrorMap(e -> {
-                    if (e instanceof NotFoundException || e instanceof StatusAlreadySetException) {
+                    if (e instanceof ItemNotFoundException || e instanceof ItemStatusAlreadySetException) {
                         return e;
                     }
                     log.error("Error updating cpu: {}", e.getMessage(), e);
-                    return new UpdatedException("Error updating cpu: ", e);
+                    return new ItemUpdatedException("Error updating cpu: ", e);
                 });
     }
 
     @Override
     public Mono<Cpu> getCpuById(String id) {
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cannot find cpu with id: " + id)));
+                .switchIfEmpty(Mono.error(new ItemNotFoundException("Cannot find cpu with id: " + id)));
     }
 
     @Override
     public Flux<Cpu> getCpuByStatus(Boolean status) {
         return repository.findByStatus(status)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cannot find cpu with status: " + status)));
+                .switchIfEmpty(Mono.error(new ItemNotFoundException("Cannot find cpu with status: " + status)));
     }
 
     @Override
     public Flux<Cpu> getCpuByIpAddress(String ipAddress) {
         return repository.findByIpAddress(ipAddress)
-                .switchIfEmpty(Mono.error(new NotFoundException("Cannot find cpu with ip address: " + ipAddress)));
+                .switchIfEmpty(Mono.error(new ItemNotFoundException("Cannot find cpu with ip address: " + ipAddress)));
     }
 }

@@ -18,4 +18,11 @@ public class ErrorResponse {
         this.error = error;
         this.message = message;
     }
+
+    public ErrorResponse(int status, String error, String message, Map<String, String> details) {
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.details = details;
+    }
 }

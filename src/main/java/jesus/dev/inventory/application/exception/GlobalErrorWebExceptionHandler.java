@@ -1,41 +1,33 @@
 package jesus.dev.inventory.application.exception;
 
 import jesus.dev.inventory.application.exception.model.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.*;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 @Order(-2)
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
-    private final Map<Class<? extends Throwable>, HttpStatus> exceptionStatusMap;
-    private final ServerCodecConfigurer serverCodecConfigurer;
+    private final List<ErrorHandlerStrategy> errorHandlerStrategies;
 
     public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, WebProperties.Resources resources,
-                                          ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
+                                          ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer,
+                                          List<ErrorHandlerStrategy> errorHandlerStrategies) {
         super(errorAttributes, resources, applicationContext);
         this.setMessageWriters(serverCodecConfigurer.getWriters());
-        this.exceptionStatusMap = new HashMap<>();
-        this.exceptionStatusMap.put(WebExchangeBindException.class, HttpStatus.BAD_REQUEST);
-        this.exceptionStatusMap.put(NotFoundException.class, HttpStatus.BAD_REQUEST);
-        this.exceptionStatusMap.put(StatusAlreadySetException.class, HttpStatus.CONFLICT);
-        this.serverCodecConfigurer = serverCodecConfigurer;
+        this.errorHandlerStrategies = errorHandlerStrategies;
     }
 
     @Override
@@ -45,22 +37,16 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
     private Mono<ServerResponse> renderErrorResponse(ServerRequest serverRequest) {
         Throwable error = getError(serverRequest);
-        HttpStatus status = exceptionStatusMap.getOrDefault(error.getClass(), HttpStatus.INTERNAL_SERVER_ERROR);
 
-        ErrorResponse errorResponse = new ErrorResponse(status.value(), status.getReasonPhrase(), error.getMessage());
+        ErrorHandlerStrategy handler = errorHandlerStrategies.stream()
+                .filter(strategy -> strategy.supports(error))
+                .findFirst()
+                .orElseThrow();
 
-        if (error instanceof WebExchangeBindException ex) {
-            Map<String, String> errors = ex.getBindingResult().getFieldErrors()
-                    .stream()
-                    .collect(Collectors.toMap(
-                            FieldError::getField,
-                            FieldError::getDefaultMessage,
-                            (existing, replacement) -> existing
-                    ));
-            errorResponse.setDetails(errors);
-        }
-        return ServerResponse.status(status)
+        ErrorResponse response = handler.handle(error);
+
+        return ServerResponse.status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(errorResponse));
+                .body(BodyInserters.fromValue(response));
     }
 }
