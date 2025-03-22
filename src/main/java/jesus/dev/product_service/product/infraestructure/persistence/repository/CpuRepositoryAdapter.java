@@ -5,11 +5,12 @@ import jesus.dev.product_service.product.domain.model.Cpu;
 import jesus.dev.product_service.product.domain.repository.CpuRepository;
 import jesus.dev.product_service.product.infraestructure.persistence.mapper.CpuMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class CpuRepositoryAdapter implements CpuRepository {
     private final CpuReactiveMongoRepository mongoRepository;

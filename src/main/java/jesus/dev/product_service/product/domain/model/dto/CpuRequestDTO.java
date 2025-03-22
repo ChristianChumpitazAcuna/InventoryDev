@@ -26,7 +26,7 @@ public class CpuRequestDTO {
     @NotBlank(message = "Brand is required")
     @Size(max = 50, message = "Brand cannot exceed 50 characters")
     @Pattern(
-            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ-]+$",
+            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ -]+$",
             message = "Only letters, numbers, accents, and hyphens are allowed"
     )
     private String brand;
@@ -34,7 +34,7 @@ public class CpuRequestDTO {
     @NotBlank(message = "Model is required")
     @Size(max = 50, message = "Model cannot exceed 50 characters")
     @Pattern(
-            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ-]+$",
+            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ -]+$",
             message = "Only letters, numbers, accents, and hyphens are allowed"
     )
     private String model;
@@ -50,7 +50,7 @@ public class CpuRequestDTO {
     @NotBlank(message = "Operating System is required")
     @Size(max = 50, message = "Operating System cannot exceed 50 characters")
     @Pattern(
-            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ-]+$",
+            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ -]+$",
             message = "Only letters, numbers, accents, and hyphens are allowed"
     )
     private String operatingSystem;
