@@ -1,7 +1,6 @@
 package jesus.dev.inventory.application.exception;
 
 import jesus.dev.inventory.application.exception.model.ErrorResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;

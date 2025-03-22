@@ -5,10 +5,11 @@ import jesus.dev.inventory.application.exception.ErrorHandlerStrategy;
 import jesus.dev.inventory.application.exception.model.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.FieldError;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class ValidationExceptionHandler implements ErrorHandlerStrategy {
@@ -22,13 +23,14 @@ public class ValidationExceptionHandler implements ErrorHandlerStrategy {
     public ErrorResponse handle(Throwable error) {
         CustomValidationException ex = (CustomValidationException) error;
 
-        Map<String, String> errors = ex.getErrors().getFieldErrors()
-                .stream()
-                .collect(Collectors.toMap(
-                        FieldError::getField,
-                        FieldError::getDefaultMessage,
-                        (oldValue, newValue) -> oldValue + ": " + newValue
-                ));
+        List<Map<String, String>> errors = new ArrayList<>();
+
+        ex.getErrors().getFieldErrors().forEach(fieldError -> {
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("field", fieldError.getField());
+            errorMap.put("message", fieldError.getDefaultMessage());
+            errors.add(errorMap);
+        });
 
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),

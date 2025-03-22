@@ -16,22 +16,43 @@ public class CpuRequestDTO {
     )
     private String ipAddress;
 
+    @NotBlank(message = "MAC Address is required")
     @Pattern(
             regexp = "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$",
             message = "Invalid MAC address format"
     )
     private String macAddress;
 
+    @NotBlank(message = "Brand is required")
     @Size(max = 50, message = "Brand cannot exceed 50 characters")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ-]+$",
+            message = "Only letters, numbers, accents, and hyphens are allowed"
+    )
     private String brand;
 
+    @NotBlank(message = "Model is required")
     @Size(max = 50, message = "Model cannot exceed 50 characters")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ-]+$",
+            message = "Only letters, numbers, accents, and hyphens are allowed"
+    )
     private String model;
 
+    @NotBlank(message = "Serial Number is required")
     @Size(max = 100, message = "Serial number cannot exceed 100 characters")
+    @Pattern(
+            regexp = "^[A-Z0-9]+$",
+            message = "Only capital letters and numbers are allowed"
+    )
     private String serialNumber;
 
+    @NotBlank(message = "Operating System is required")
     @Size(max = 50, message = "Operating System cannot exceed 50 characters")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ-]+$",
+            message = "Only letters, numbers, accents, and hyphens are allowed"
+    )
     private String operatingSystem;
 
     @NotBlank(message = "ProcessorId is required")

@@ -19,7 +19,6 @@ public class CustomValidator {
         validator.validate(object, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            log.error("Validation errors: {}", bindingResult.getAllErrors());
             return Mono.error(new CustomValidationException(bindingResult));
         }
         return Mono.just(object);
