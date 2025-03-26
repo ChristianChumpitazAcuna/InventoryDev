@@ -6,6 +6,7 @@ import jesus.dev.product_service.exception.ItemStatusAlreadySetException;
 import jesus.dev.product_service.exception.ItemUpdatedException;
 import jesus.dev.product_service.product.application.mapper.ProductUseCaseMapper;
 import jesus.dev.product_service.product.application.service.ProductUseCasesImpl;
+import jesus.dev.product_service.product.data.ProductDataTest;
 import jesus.dev.product_service.product.domain.model.Product;
 import jesus.dev.product_service.product.domain.model.dto.ProductRequestDTO;
 import jesus.dev.product_service.product.domain.repository.ProductRepository;
@@ -42,8 +43,8 @@ public class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productDomain = createProduct();
-        productDTO = createProductRequestDTO();
+        productDomain = ProductDataTest.createProduct();
+        productDTO = ProductDataTest.createProductRequestDTO();
     }
 
     @Test
@@ -78,10 +79,10 @@ public class ProductServiceTest {
     void testGetProductsByStatus_Success() {
         Boolean status = true;
 
-        Product product1 = createProduct();
+        Product product1 = ProductDataTest.createProduct();
         product1.setIpAddress("192.168.1.10");
 
-        Product product2 = createProduct();
+        Product product2 = ProductDataTest.createProduct();
         product2.setIpAddress("192.168.1.11");
 
         Flux<Product> productFlux = Flux.just(product1, product2);
@@ -139,7 +140,7 @@ public class ProductServiceTest {
         productDTO.setOperatingSystem("Windows 11");
 
         // Domain Product
-        Product updatedProduct = createProduct();
+        Product updatedProduct = ProductDataTest.createProduct();
         updatedProduct.setId(id);
         updatedProduct.setOperatingSystem(productDTO.getOperatingSystem());
 
@@ -175,7 +176,7 @@ public class ProductServiceTest {
         productDTO.setSerialNumber("200");
 
         // Domain Product
-        Product updatedProduct = createProduct();
+        Product updatedProduct = ProductDataTest.createProduct();
         updatedProduct.setId(id);
         updatedProduct.setSerialNumber(productDomain.getSerialNumber());
 
@@ -200,7 +201,7 @@ public class ProductServiceTest {
         productDTO.setSerialNumber("200");
 
         // Domain Product
-        Product updatedProduct = createProduct();
+        Product updatedProduct = ProductDataTest.createProduct();
         updatedProduct.setId(id);
         updatedProduct.setSerialNumber(productDomain.getSerialNumber());
 
@@ -292,37 +293,5 @@ public class ProductServiceTest {
 
         verify(repository, times(1)).findById(id);
         verify(repository, times(1)).changeStatus(id, status);
-    }
-
-    private Product createProduct() {
-        Product product = new Product();
-        product.setId(UUID.randomUUID().toString());
-        product.setIpAddress("192.168.1.87");
-        product.setMacAddress("00:D8:61:C1:33:E9");
-        product.setBrand("HP");
-        product.setModel("ProDesk 400 G6 SFF");
-        product.setSerialNumber("120");
-        product.setOperatingSystem("Windows 10");
-        product.setProcessorId("proc-123");
-        product.setRamId("ram-123");
-        product.setVideoCardId("video-card-123");
-        product.setScreenId("screen-123");
-        product.setStatus(true);
-        return product;
-    }
-
-    private ProductRequestDTO createProductRequestDTO() {
-        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
-        productRequestDTO.setIpAddress("192.168.1.87");
-        productRequestDTO.setMacAddress("00:D8:61:C1:33:E9");
-        productRequestDTO.setBrand("HP");
-        productRequestDTO.setModel("ProDesk 400 G6 SFF");
-        productRequestDTO.setSerialNumber("120");
-        productRequestDTO.setOperatingSystem("Windows 10");
-        productRequestDTO.setProcessorId("proc-123");
-        productRequestDTO.setRamId("ram-123");
-        productRequestDTO.setVideoCardId("video-card-123");
-        productRequestDTO.setScreenId("screen-123");
-        return productRequestDTO;
     }
 }
