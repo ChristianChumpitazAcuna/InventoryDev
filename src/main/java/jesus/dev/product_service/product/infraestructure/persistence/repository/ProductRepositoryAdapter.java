@@ -1,25 +1,24 @@
 package jesus.dev.product_service.product.infraestructure.persistence.repository;
 
 
-import jesus.dev.product_service.product.domain.model.Cpu;
-import jesus.dev.product_service.product.domain.repository.CpuRepository;
-import jesus.dev.product_service.product.infraestructure.persistence.mapper.CpuMapper;
+import jesus.dev.product_service.product.domain.model.Product;
+import jesus.dev.product_service.product.domain.repository.ProductRepository;
+import jesus.dev.product_service.product.infraestructure.persistence.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class CpuRepositoryAdapter implements CpuRepository {
-    private final CpuReactiveMongoRepository mongoRepository;
-    private final CpuMapper mapper;
+public class ProductRepositoryAdapter implements ProductRepository {
+    private final ProductReactiveMongoRepository mongoRepository;
+    private final ProductMapper mapper;
 
 
     @Override
-    public Mono<Cpu> save(Cpu cpu) {
-        return Mono.just(cpu)
+    public Mono<Product> save(Product product) {
+        return Mono.just(product)
                 .map(mapper::toEntity)
                 .flatMap(mongoRepository::save)
                 .map(mapper::toDomain);
@@ -31,19 +30,19 @@ public class CpuRepositoryAdapter implements CpuRepository {
     }
 
     @Override
-    public Mono<Cpu> findById(String id) {
+    public Mono<Product> findById(String id) {
         return mongoRepository.findById(id)
                 .map(mapper::toDomain);
     }
 
     @Override
-    public Flux<Cpu> findByStatus(Boolean status) {
+    public Flux<Product> findByStatus(Boolean status) {
         return mongoRepository.findByStatus(status)
                 .map(mapper::toDomain);
     }
 
     @Override
-    public Flux<Cpu> findByIpAddress(String ipAddress) {
+    public Mono<Product> findByIpAddress(String ipAddress) {
         return mongoRepository.findByIpAddress(ipAddress)
                 .map(mapper::toDomain);
     }

@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CpuRequestDTO {
+public class ProductRequestDTO {
     @NotBlank(message = "IP address is required")
     @Pattern(
             regexp = "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",

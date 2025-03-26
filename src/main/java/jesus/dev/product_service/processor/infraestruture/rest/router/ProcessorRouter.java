@@ -16,7 +16,7 @@ public class ProcessorRouter {
     private static final String BASE_PATH = "/api/v1/processor";
 
     @Bean
-    public RouterFunction<ServerResponse> cpuRoutes(ProcessorHandler handler) {
+    public RouterFunction<ServerResponse> processorRoutes(ProcessorHandler handler) {
         return RouterFunctions
                 .nest(path(BASE_PATH),
                         route(POST("/create"), handler::create)

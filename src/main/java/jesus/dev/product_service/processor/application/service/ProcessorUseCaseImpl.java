@@ -85,7 +85,6 @@ public class ProcessorUseCaseImpl implements ProcessorUseCases {
 
     @Override
     public Flux<Processor> getProcessorsByStatus(Boolean status) {
-        return repository.findByStatus(status)
-                .switchIfEmpty(Mono.error(new ItemNotFoundException("Processor not found with status: " + status)));
+        return repository.findByStatus(status);
     }
 }

@@ -2,12 +2,12 @@ spring:
   application:
     name: InventoryDev
   cloud:
-     config:
-       import-check:
-         enabled: false
+    config:
+      import-check:
+        enabled: false
   data:
     mongodb:
-      uri: mongodb+srv://jesuschumpitaz:InventoryDev@inventory.4jvtg.mongodb.net/InventoryDev?retryWrites=true&w=majority
+      uri: ${DB_URI}
 
 server:
-  port: ${SERVER_PORT:8090}
+  port: ${SERVER_PORT}

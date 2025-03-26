@@ -1,8 +1,8 @@
 package jesus.dev.product_service.product.infraestructure.rest.handler;
 
-import jesus.dev.product_service.product.domain.model.Cpu;
-import jesus.dev.product_service.product.domain.model.dto.CpuRequestDTO;
-import jesus.dev.product_service.product.domain.useCases.CpuUseCases;
+import jesus.dev.product_service.product.domain.model.Product;
+import jesus.dev.product_service.product.domain.model.dto.ProductRequestDTO;
+import jesus.dev.product_service.product.domain.useCases.ProductUseCases;
 import jesus.dev.product_service.util.validator.CustomValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,53 +15,53 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class CpuHandler {
-    private final CpuUseCases useCases;
+public class ProductHandler {
+    private final ProductUseCases useCases;
     private final CustomValidator customValidator;
 
     public Mono<ServerResponse> create(ServerRequest request) {
-        return request.bodyToMono(CpuRequestDTO.class)
+        return request.bodyToMono(ProductRequestDTO.class)
                 .flatMap(customValidator::validate)
-                .flatMap(useCases::saveCpu)
-                .flatMap(cpu -> ServerResponse.status(HttpStatus.CREATED)
+                .flatMap(useCases::saveProduct)
+                .flatMap(product -> ServerResponse.status(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(cpu)
+                        .bodyValue(product)
                 );
     }
 
     public Mono<ServerResponse> update(ServerRequest request) {
         String id = request.pathVariable("id");
-        return request.bodyToMono(CpuRequestDTO.class)
+        return request.bodyToMono(ProductRequestDTO.class)
                 .flatMap(customValidator::validate)
-                .flatMap(dto -> useCases.updateCpu(id, dto))
-                .flatMap(cpu -> ServerResponse.ok()
+                .flatMap(dto -> useCases.updateProduct(id, dto))
+                .flatMap(product -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(cpu)
+                        .bodyValue(product)
                 );
     }
 
     public Mono<ServerResponse> changeStatus(ServerRequest request) {
         String id = request.pathVariable("id");
         Boolean status = Boolean.parseBoolean(request.pathVariable("status"));
-        return useCases.changeStatusCpu(id, status)
+        return useCases.changeStatusProduct(id, status)
                 .then(ServerResponse.noContent().build());
     }
 
     public Mono<ServerResponse> getById(ServerRequest request) {
         String id = request.pathVariable("id");
-        return useCases.getCpuById(id)
-                .flatMap(cpu -> ServerResponse.ok()
+        return useCases.getProductById(id)
+                .flatMap(product -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(cpu)
+                        .bodyValue(product)
                 );
     }
 
     public Mono<ServerResponse> getByStatus(ServerRequest request) {
         Boolean status = Boolean.parseBoolean(request.pathVariable("status"));
-        Flux<Cpu> cpuFlux = useCases.getCpuByStatus(status);
+        Flux<Product> productFlux = useCases.getProductByStatus(status);
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(cpuFlux, Cpu.class);
+                .body(productFlux, Product.class);
     }
 
 }

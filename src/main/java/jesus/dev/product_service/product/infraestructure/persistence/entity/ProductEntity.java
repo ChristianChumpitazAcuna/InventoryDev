@@ -1,12 +1,14 @@
-package jesus.dev.product_service.product.domain.model;
+package jesus.dev.product_service.product.infraestructure.persistence.entity;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
-public class Cpu {
+@Document("cpu")
+public class ProductEntity {
     @Id
     private String id;
     private String ipAddress;
