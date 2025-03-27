@@ -10,4 +10,4 @@ spring:
       uri: ${DB_URI}
 
 server:
-  port: ${SERVER_PORT}
+  port: 8090
