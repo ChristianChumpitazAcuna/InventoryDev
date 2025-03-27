@@ -58,5 +58,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/inventory_dev:v1
+          tags: ${{ secrets.DOCKER_USER }}/inventory_dev:v1
 
