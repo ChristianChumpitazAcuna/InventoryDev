@@ -41,12 +41,12 @@ public class ProductUseCasesImpl implements ProductUseCases {
     public Mono<Product> updateProduct(String id, ProductRequestDTO productRequestDTO) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new ItemNotFoundException("Product not found with id: " + id)))
-                .flatMap(existingProduct -> Mono.fromSupplier(() -> {
+                .map(existingProduct -> {
                     Product product = mapper.dtoToDomain(productRequestDTO);
                     product.setId(existingProduct.getId());
                     product.setStatus(true);
                     return product;
-                }))
+                })
                 .flatMap(repository::save)
                 .onErrorMap(e -> {
                     if (e instanceof ItemNotFoundException) {

@@ -4,7 +4,7 @@ import jesus.dev.product_service.product.application.service.ProductUseCasesImpl
 import jesus.dev.product_service.product.data.ProductDataTest;
 import jesus.dev.product_service.product.domain.model.Product;
 import jesus.dev.product_service.product.domain.model.dto.ProductRequestDTO;
-import jesus.dev.product_service.product.infraestructure.rest.handler.ProductHandler;
+import jesus.dev.product_service.product.infrastructure.rest.handler.ProductHandler;
 import jesus.dev.product_service.util.validator.CustomValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

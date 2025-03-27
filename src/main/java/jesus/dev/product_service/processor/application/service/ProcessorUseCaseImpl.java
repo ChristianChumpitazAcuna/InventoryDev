@@ -41,12 +41,12 @@ public class ProcessorUseCaseImpl implements ProcessorUseCases {
     public Mono<Processor> updateProcessor(String id, ProcessorRequestDTO processorRequestDTO) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new ItemNotFoundException("Processor not found with id: " + id)))
-                .flatMap(existingProcessor -> Mono.fromSupplier(() -> {
+                .map(existingProcessor -> {
                     Processor processor = mapper.dtoToDomain(processorRequestDTO);
                     processor.setId(id);
                     processor.setStatus(true);
                     return processor;
-                }))
+                })
                 .flatMap(repository::save)
                 .onErrorMap(e -> {
                     if (e instanceof ItemNotFoundException) {
