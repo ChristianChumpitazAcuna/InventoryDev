@@ -35,3 +35,20 @@ La aplicación utiliza la variable de entorno `DB_URI` para conectarse a la base
 
    ```sh
    git clone https://github.com/ChristianChumpitazAcuna/InventoryDev.git
+
+## 🧪 Pruebas Unitarias
+
+El proyecto incluye pruebas unitarias para los servicios principales, implementadas utilizando **JUnit 5** y **Mockito**. Estas pruebas aseguran que cada componente funcione correctamente de manera aislada, facilitando la detección temprana de errores y mejorando la calidad del código.
+
+### Tecnologías de Pruebas Utilizadas
+
+- **JUnit 5:** Framework de pruebas unitarias para Java que proporciona anotaciones y aserciones para la creación de tests.
+- **Mockito:** Framework de simulación que permite crear objetos mock para probar componentes de manera aislada.
+
+### Ubicación de las Pruebas
+
+Las pruebas unitarias se encuentran en el directorio `src/test/java` del proyecto. Para ejecutarlas, puedes utilizar el siguiente comando de Maven:
+
+```sh
+mvn test
+
